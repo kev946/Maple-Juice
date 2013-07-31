@@ -1,0 +1,200 @@
+/*
+ * fileList.cpp
+ *
+ *  Created on: Jun 30, 2013
+ *      Author: klpeter2
+ */
+
+#include "FileList.h"
+
+FileList::FileList()
+{
+
+}
+
+FileList::~FileList()
+{
+
+}
+
+/*
+ * Add tuple to the membership list.
+ */
+void FileList::add(FileList::tuple tup)
+{
+	if (!isInList(tup.get<0>()))
+	{
+		fileList.push_back(tup);
+		std::string s = tupleToString(tup);
+	}
+}
+
+/*
+ * Remove tuple from membership list with matching file name.
+ */
+void FileList::removeFile(const std::string& fileName)
+{
+	std::cout << "Removing file " + fileName + " from file list." << std::endl;
+	for (std::vector<FileList::tuple>::iterator it = fileList.begin();
+			it < fileList.end(); it++)
+	{
+		if (it->get<0>() == fileName)
+		{
+			it = fileList.erase(it);
+		}
+	}
+}
+
+/*
+ * Checks if the file name is in the membership list.
+ */
+bool FileList::isInList(const std::string& fileName)
+{
+	for (std::vector<FileList::tuple>::const_iterator it = fileList.begin();
+			it < fileList.end(); it++)
+	{
+		if (it->get<0>() == fileName)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+/*
+ * Prints the contents of the membership list
+ */
+void FileList::print()
+{
+	for (std::vector<FileList::tuple>::iterator it = fileList.begin();
+			it < fileList.end(); it++)
+	{
+		std::string tup = tupleToString(*it);
+		std::cout << tup << std::endl;
+	}
+}
+
+std::vector<FileList::tuple> FileList::get()
+{
+	return fileList;
+}
+
+std::string FileList::tupleToString(const FileList::tuple& tup)
+{
+	std::string fileName = tup.get<0>();
+	std::vector<std::string> ips = tup.get<1>();
+	std::string tuple = "(" + fileName;
+	for (std::vector<std::string>::iterator it = ips.begin(); it != ips.end();
+			it++)
+	{
+		std::string tmp = ", " + *it;
+		tuple += tmp;
+	}
+	tuple += ")";
+	return tuple;
+}
+
+int FileList::size()
+{
+	return fileList.size();
+}
+
+std::string FileList::getIp(const std::string& fileName)
+{
+	for (std::vector<FileList::tuple>::iterator it = fileList.begin();
+			it < fileList.end(); it++)
+	{
+		if (it->get<0>() == fileName)
+		{
+			std::vector<std::string> processesWithFile = it->get<1>();
+			for(int i = 0; i < processesWithFile.size(); i++)
+			{
+				if(processesWithFile[i] != "" /*&& processesWithFile[i] != FileList::myIpStatic*/)
+					return processesWithFile[i];
+			}
+		}
+	}
+}
+
+void FileList::removeIp(const std::string& ip)
+{
+	std::cout << "Removing process " + ip + " from file list." << std::endl;
+	for (std::vector<FileList::tuple>::iterator it = fileList.begin();
+			it != fileList.end(); it++)
+	{
+		for (std::vector<std::string>::iterator vit = it->get<1>().begin();
+				vit != it->get<1>().end(); vit++)
+		{
+			if (*vit == ip)
+			{
+				//vit = it->get<1>().erase(vit);
+				*vit = "";
+			}
+		}
+	}
+}
+
+std::string FileList::ownersOfFile(const std::string& fileName)
+{
+	std::string message;
+	for (std::vector<FileList::tuple>::iterator it = fileList.begin();
+			it != fileList.end(); it++)
+	{
+		if (it->get<0>() == fileName)
+		{
+			for (int i = 0; i < it->get<1>().size(); ++i)
+			{
+				message += "_" + it->get<1>()[i];
+			}
+		}
+	}
+	return message;
+}
+
+int FileList::numOwners(const std::string& fileName)
+{
+	int num = 0;
+	for (std::vector<FileList::tuple>::iterator it = fileList.begin();
+			it != fileList.end(); it++)
+	{
+		if (it->get<0>() == fileName)
+		{
+			num = it->get<1>().size();
+		}
+	}
+	return num;
+}
+
+void FileList::update(std::string fileName, std::string ip)
+{
+	if (!isInList(fileName))
+	{
+		std::vector<std::string> mbr;
+		mbr.push_back(ip);
+		tuple tup(fileName, mbr);
+		fileList.push_back(tup);
+		if(ip != "")
+	}
+	else
+	{
+		for (std::vector<FileList::tuple>::iterator it = fileList.begin();
+				it != fileList.end(); it++)
+		{
+			if (it->get<0>() == fileName)
+			{
+				if (std::find(it->get<1>().begin(), it->get<1>().end(), ip)
+						!= it->get<1>().end())
+				{
+					/* v contains x */
+				}
+				else
+				{
+					/* v does not contain x */
+					it->get<1>().push_back(ip);
+				}
+			}
+		}
+	}
+}
+
+std::string FileList::myIpStatic;

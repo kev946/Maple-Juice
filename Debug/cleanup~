@@ -1,0 +1,20 @@
+#!/bin/bash
+# Cleans up the /tmp/ files generated
+# from running maple and juice
+# with files mapleinput1 & mapleinput2
+
+# Maple output files
+rm -f /tmp/maplein
+rm -f /tmp/mapleouthello
+rm -f /tmp/mapleoutexample
+rm -f /tmp/mapleouttest
+rm -f /tmp/mapleoutworld
+rm -f /tmp/mapleoutkeys
+
+# Juice output files
+rm -f /tmp/juiceouthello
+rm -f /tmp/juiceoutexample
+rm -f /tmp/juiceouttest
+rm -f /tmp/juiceoutworld
+rm -f /tmp/juiceout
+

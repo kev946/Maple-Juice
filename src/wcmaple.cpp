@@ -1,0 +1,61 @@
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <map>
+
+using namespace std;
+
+/* Word Count Maple task. Distributed system
+ * not known to the task. This task takes in a file
+ * and outputs multiple files containing tuples
+ * of each key and its occurrence. Each key K gets its
+ * own file where K is appended to output_file_prefix.
+ * A file that holds all the keys that were seen is
+ * also produced.
+ *
+ * Usage: <input_file> <output_file_prefix>
+ */
+int main(int argc, char **argv)
+{
+  // open input and output files
+  if (argc != 3) 
+	{
+      cerr << "usage: wcmaple <input file> <output file>\n";
+      return 1;
+  }
+	map<string, int> keys;
+	string keyfilename = "/tmp/";
+	keyfilename += argv[2];
+	keyfilename += "keys";
+	ofstream keyfile(keyfilename.c_str(), ofstream::app);
+  ifstream input(argv[1]);
+
+  // get words from input file, write tuples to output file
+  string token;
+  while(input >> token) 
+	{
+			// add key to map if not found
+			if(keys.find(token) == keys.end())
+			{
+				keyfile << token << endl;
+				keys[token] = 1;
+			}
+			else // otherwise increment its occurrence
+			{
+				keys[token]++;
+			}
+  }
+
+	// write keys to files
+	for(map<string, int>::iterator it = keys.begin(); it != keys.end(); ++it)
+	{
+		// append key to output_file_prefix
+		string filename = "/tmp/";
+		filename += argv[2];
+		filename += it->first;
+		ofstream output(filename.c_str(), ofstream::app);
+		for(int i = 0; i < it->second; ++i)
+			output << "( " << it->first << " , " << "1 )" << endl;
+	}
+  return 0;
+}
